@@ -10,6 +10,7 @@ public interface PostService {
     Post getPostById(Long id);
 
     void createPost(Post post);
-
+    void updatePost(Long id, Post post);
+    void deletePost(Long id);
     // 其他方法...
 }

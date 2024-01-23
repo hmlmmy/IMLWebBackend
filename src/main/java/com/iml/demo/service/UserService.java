@@ -1,6 +1,8 @@
 package com.iml.demo.service;
 
+import com.iml.demo.model.AuthenticationRequest;
 import com.iml.demo.model.User;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -14,4 +16,6 @@ public interface UserService {
     User getUserById(Long id);
 
     User saveUser(User user);
+
+    ResponseEntity<?> authenticate(AuthenticationRequest authenticationRequest);
 }

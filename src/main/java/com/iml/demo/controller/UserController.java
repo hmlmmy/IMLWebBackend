@@ -1,9 +1,12 @@
 package com.iml.demo.controller;
 
+import com.iml.demo.model.AuthenticationRequest;
 import com.iml.demo.model.User;
 import com.iml.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,6 +16,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
+
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         // 根据用户ID获取用户信息的逻辑
@@ -21,13 +27,6 @@ public class UserController {
         User user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
-
-//    @GetMapping("/test")
-//    public User getUserStatus(){
-//        User user = new User((long)1,"a","aa");
-//        System.out.println(user);
-//        return user;
-//    }
 
     @PostMapping("/save")
     public ResponseEntity<User> saveUser(@RequestBody User user) {
@@ -55,5 +54,9 @@ public class UserController {
 
         return ResponseEntity.ok(savedUser);
     }
-}
 
+    @PostMapping("/authenticate")
+    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
+        return userService.authenticate(authenticationRequest);
+    }
+}

@@ -1,10 +1,15 @@
 package com.iml.demo.serviceImpl;
 
+import com.iml.demo.model.AuthenticationRequest;
 import com.iml.demo.model.User;
 import com.iml.demo.repository.UserRepository;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.iml.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +54,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(User user) {
         return userRepository.save(user);
+    }
+
+    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
+        try {
+            // 通过 userService 从数据库中获取用户信息
+            User user = userRepository.findByUsername(authenticationRequest.getUsername());
+
+            if (user != null) {
+                // 比对明文密码
+                if (authenticationRequest.getPassword().equals(user.getPassword())) {
+                    // 返回成功消息
+                    return ResponseEntity.ok("Authentication successful");
+                } else {
+                    // 密码不匹配，返回失败消息
+                    return ResponseEntity.status(401).body("Authentication failed: Password incorrect");
+                }
+            } else {
+                // 用户不存在，返回失败消息
+                return ResponseEntity.status(401).body("Authentication failed: User not found");
+            }
+        } catch (Exception e) {
+            // 处理其他可能的异常
+            return ResponseEntity.status(500).body("Internal server error");
+        }
     }
 }
 
