@@ -14,8 +14,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public void register(@RequestParam String username, @RequestParam String password) {
-        userService.registerUser(username, password);
+    public void register(@RequestParam String username, @RequestParam String password, @RequestParam String email) {
+        userService.registerUser(username, password, email);
     }
 
     @PostMapping("/login")

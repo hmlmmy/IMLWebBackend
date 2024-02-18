@@ -5,14 +5,14 @@ import com.iml.demo.model.User;
 import com.iml.demo.repository.UserRepository;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.iml.demo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.iml.demo.RandomIdGenerator.generateRandomId;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -31,9 +31,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void registerUser(String username, String password) {
+    public void registerUser(String username, String password, String email) {
+        // 生成随机8位ID
+        long randomId = generateRandomId();
+
         User user = new User();
+        user.setId(randomId);
         user.setUsername(username);
+        user.setPassword(password);
+        user.setEmail(email);
 //        user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
     }
@@ -50,7 +56,10 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUser = userRepository.findById(id);
         return optionalUser.orElse(null);
     }
-
+    @Override
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
     @Override
     public User saveUser(User user) {
         return userRepository.save(user);
@@ -79,5 +88,17 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.status(500).body("Internal server error");
         }
     }
+    @Override
+    public boolean isUsernameTaken(String username) {
+        User existingUser = userRepository.findByUsername(username);
+        return existingUser != null;
+    }
+
+    @Override
+    public boolean isEmailRegistered(String email) {
+        User existingUser = userRepository.findByEmail(email);
+        return existingUser != null;
+    }
+
 }
 
