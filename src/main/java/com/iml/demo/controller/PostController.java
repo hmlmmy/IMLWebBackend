@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000") // 替换为您的前端应用的地址
+//@CrossOrigin(origins = "http://localhost:3000") // 替换为您的前端应用的地址
 @RequestMapping("/api/posts")
 public class PostController {
     @Autowired

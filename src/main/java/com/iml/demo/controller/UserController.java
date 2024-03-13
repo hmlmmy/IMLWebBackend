@@ -2,6 +2,7 @@ package com.iml.demo.controller;
 
 import com.iml.demo.model.AuthenticationRequest;
 import com.iml.demo.model.User;
+import com.iml.demo.service.AuthService;
 import com.iml.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +14,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000") // 替换为您的前端应用的地址
+//@CrossOrigin(origins = "http://localhost:3000") // 替换为您的前端应用的地址
 @RequestMapping("/api/user")
 public class UserController {
     @Autowired
     private UserService userService;
+    private final AuthService authService;
 
 //    @Autowired
 //    private PasswordEncoder passwordEncoder;
+
+    public UserController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
@@ -76,6 +82,7 @@ public class UserController {
 
         existingUser.setUsername(updatedUser.getUsername());
         existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setPassword(updatedUser.getPassword());
         // 其他更新逻辑...
 
         User savedUser = userService.saveUser(existingUser); // 保存更新后的用户信息
@@ -83,17 +90,8 @@ public class UserController {
         return ResponseEntity.ok(savedUser);
     }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
-        // 身份验证逻辑...
-
-        // 假设验证成功，返回包含用户信息的对象，包括用户 ID
-        User authenticatedUser = userService.getUserByUsername(authenticationRequest.getUsername());
-        Map<String, Object> response = new HashMap<>();
-        response.put("id", authenticatedUser.getId());
-        response.put("username", authenticatedUser.getUsername());
-        // 其他用户信息...
-
-        return ResponseEntity.ok(response);
-    }
+//    @PostMapping("/authenticate")
+//    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
+//        return authService.authenticate(authenticationRequest);
+//    }
 }
